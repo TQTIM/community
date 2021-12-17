@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<li class="media pb-3 pt-3 mb-3 border-bottom" th:each="map:${discussPosts}">
+    <div>
+        <h6 th:utext="${map.post.title}"></h6>
+    </div>
+</li>
+</body>
+</html>

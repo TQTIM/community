@@ -1,0 +1,38 @@
+server:
+  servlet:
+    context-path: /community
+  port: 8081
+
+spring:
+  thymeleaf:
+    mode: HTML
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/community?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC
+    username: root
+    password: root
+  mail:
+    host: smtp.qq.com
+    port: 465
+    username: 1330875414@qq.com
+    password: yowrovyssdzoffgc
+    protocol: smtps
+
+
+
+
+
+mybatis:
+  type-aliases-package: com.tq.community.entity
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+
+logging:
+  level:
+    com.tq.community: debug
+#  file:
+#    name: D:/community/log/community.log
