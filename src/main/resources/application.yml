@@ -21,18 +21,22 @@ spring:
     password: yowrovyssdzoffgc
     protocol: smtps
 
-
-
-
-
 mybatis:
   type-aliases-package: com.tq.community.entity
   mapper-locations: classpath:mapper/*.xml
   configuration:
     map-underscore-to-camel-case: true
+    #主键回填
+    use-generated-keys: true
 
 logging:
   level:
     com.tq.community: debug
 #  file:
 #    name: D:/community/log/community.log
+
+#community
+community:
+  path:
+    domain:
+      http://localhost:8081

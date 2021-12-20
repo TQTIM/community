@@ -2,6 +2,7 @@ package com.tq.community.mapper;
 
 import com.tq.community.entity.User;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -14,4 +15,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserMapper {
     User findUserById(int userid);
+    User selectByName(String username);
+    User selectByEmail(String email);
+    int insertUser(User user);
+    int updateStatus(@Param("id") int userid);
 }

@@ -2,6 +2,8 @@ package com.tq.community.service;
 
 import com.tq.community.entity.User;
 
+import java.util.Map;
+
 
 /**
  * @author TQ
@@ -12,4 +14,6 @@ import com.tq.community.entity.User;
 
 public interface UserService {
     User findUserById(int userid);
+    Map<String,Object> register(User user);
+    int activation(int userid,String code);
 }
