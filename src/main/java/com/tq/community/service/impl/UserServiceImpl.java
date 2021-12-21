@@ -1,7 +1,9 @@
 package com.tq.community.service.impl;
 
+import com.tq.community.entity.LoginTicket;
 import com.tq.community.entity.MailConstant;
 import com.tq.community.entity.User;
+import com.tq.community.mapper.LoginTicketMapper;
 import com.tq.community.mapper.UserMapper;
 import com.tq.community.service.UserService;
 import com.tq.community.util.CommunityUtil;
@@ -32,6 +34,8 @@ public class UserServiceImpl implements UserService {
     private TemplateEngine templateEngine;
     @Autowired
     MailClient mailClient;
+    @Autowired
+    LoginTicketMapper loginTicketMapper;
     @Value("${community.path.domain}")
     private String domain;
 
@@ -104,5 +108,53 @@ public class UserServiceImpl implements UserService {
             return MailConstant.ACTIVATION_FAILURE.getCode();
         }
 
+    }
+
+    @Override
+    public Map<String, Object> login(String username, String password, long expiredSeconds) {
+        Map<String,Object> map=new HashMap<>();
+
+        //空值处理
+        if(StringUtils.isEmpty(username)){
+            map.put("usernameMsg","账号不能为空！");
+            return map;
+        }
+        if(StringUtils.isEmpty(password)){
+            map.put("passwordMsg","密码不能为空！");
+            return map;
+        }
+        //验证账号
+        User user = userMapper.selectByName(username);
+        if(user==null){
+            map.put("usernameMsg","该账号不存在！");
+            return map;
+        }
+        if(user.getStatus()==0){
+            map.put("usernameMsg","该账号未激活！");
+            return map;
+        }
+
+        // 验证密码
+        password = CommunityUtil.md5(password + user.getSalt());
+        if (!user.getPassword().equals(password)) {
+            map.put("passwordMsg", "密码不正确!");
+            return map;
+        }
+
+        //生成登入凭证
+        LoginTicket loginTicket = new LoginTicket();
+        loginTicket.setUserId(user.getId());
+        loginTicket.setTicket(CommunityUtil.generateUUID());
+        loginTicket.setStatus(0);//0-有效，1-无效
+        loginTicket.setExpired(new Date(System.currentTimeMillis()+expiredSeconds*1000));
+        loginTicketMapper.insertLoginTicket(loginTicket);
+
+        map.put("ticket",loginTicket.getTicket());
+
+        return map;
+    }
+
+    public void logout(String ticket) {
+        loginTicketMapper.updateStatus(ticket, 1);
     }
 }

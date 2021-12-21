@@ -7,13 +7,14 @@ import com.tq.community.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
 
 import javax.imageio.ImageIO;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
@@ -44,6 +45,11 @@ public class LoginController {
     public String getLoginPage() {
         return "/site/login";
     }
+
+    private static final long DEFAULT_EXPIRED_SECONDS=3600*12L;
+    private static final long REMEMBER_EXPIRED_SECONDS=3600*24*100L;
+    @Value("${server.servlet.context-path}")
+    private String contextPath;
 
     @GetMapping("/getKaptcha")
     public void getKaptcha(HttpServletResponse response, HttpSession session) {
@@ -97,6 +103,43 @@ public class LoginController {
         }
 
         return "/site/operate-result";
+    }
+
+
+    @PostMapping("/login")
+   //如果是对象传入会直接加到Model中在放入request域，零散参数是在request域中。自定义的pojo类型作为方法参数时，相当于默认加上了@ModelAttribute注解，默认key值为类名（首字母小写）
+    public String login(String username,String password,String code,boolean rememberme,
+                        Model model,HttpSession session,HttpServletResponse response){
+        //检查验证码
+        String kaptcha = (String)session.getAttribute("kaptcha");
+        if(StringUtils.isEmpty(kaptcha)||StringUtils.isEmpty(code)||!kaptcha.equalsIgnoreCase(code)){
+            model.addAttribute("codeMsg","验证码不正确！");
+            return "/site/login";
+        }
+
+        //检查账号密码
+        long expiredSeconds=rememberme ? REMEMBER_EXPIRED_SECONDS:DEFAULT_EXPIRED_SECONDS;
+        Map<String, Object> map = userService.login(username, password,expiredSeconds);
+        if(map.containsKey("ticket")){
+            //将凭证写入到cookie中发送给浏览器
+            Cookie cookie = new Cookie("ticket",map.get("ticket").toString());
+            cookie.setPath(contextPath);//路径写整个项目，@value注入
+            cookie.setMaxAge((int)expiredSeconds);
+            response.addCookie(cookie);
+            return "redirect:/index"; //事已经做完，重定向过去
+        }else {
+            model.addAttribute("usernameMsg",map.get("usernameMsg"));
+            model.addAttribute("passwordMsg",map.get("passwordMsg"));
+            return "/site/login";
+
+        }
+
+    }
+
+    @RequestMapping(path = "/logout", method = RequestMethod.GET)
+    public String logout(@CookieValue("ticket") String ticket) {
+        userService.logout(ticket);
+        return "redirect:/login";
     }
 
 }
