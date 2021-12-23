@@ -4,13 +4,13 @@ import com.google.code.kaptcha.Producer;
 import com.tq.community.entity.MailConstant;
 import com.tq.community.entity.User;
 import com.tq.community.service.UserService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.imageio.ImageIO;
@@ -112,7 +112,7 @@ public class LoginController {
                         Model model,HttpSession session,HttpServletResponse response){
         //检查验证码
         String kaptcha = (String)session.getAttribute("kaptcha");
-        if(StringUtils.isEmpty(kaptcha)||StringUtils.isEmpty(code)||!kaptcha.equalsIgnoreCase(code)){
+        if(StringUtils.isBlank(kaptcha)||StringUtils.isBlank(code)||!kaptcha.equalsIgnoreCase(code)){
             model.addAttribute("codeMsg","验证码不正确！");
             return "/site/login";
         }

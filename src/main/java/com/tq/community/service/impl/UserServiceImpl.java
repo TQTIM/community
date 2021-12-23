@@ -8,10 +8,10 @@ import com.tq.community.mapper.UserMapper;
 import com.tq.community.service.UserService;
 import com.tq.community.util.CommunityUtil;
 import com.tq.community.util.MailClient;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
@@ -53,11 +53,11 @@ public class UserServiceImpl implements UserService {
         if(user==null){
             throw new IllegalArgumentException("用户参数不能为空");
         }
-        if(StringUtils.isEmpty(user.getUsername())||StringUtils.isEmpty(user.getPassword())){
+        if(StringUtils.isBlank(user.getUsername())||StringUtils.isBlank(user.getPassword())){
             map.put("userMsg","账号或密码不能为空！");
             return map;
         }
-        if(StringUtils.isEmpty(user.getEmail())){
+        if(StringUtils.isBlank(user.getEmail())){
             map.put("emailMsg","邮箱不能为空！");
             return map;
         }
@@ -115,11 +115,11 @@ public class UserServiceImpl implements UserService {
         Map<String,Object> map=new HashMap<>();
 
         //空值处理
-        if(StringUtils.isEmpty(username)){
+        if(StringUtils.isBlank(username)){
             map.put("usernameMsg","账号不能为空！");
             return map;
         }
-        if(StringUtils.isEmpty(password)){
+        if(StringUtils.isBlank(password)){
             map.put("passwordMsg","密码不能为空！");
             return map;
         }
@@ -156,5 +156,21 @@ public class UserServiceImpl implements UserService {
 
     public void logout(String ticket) {
         loginTicketMapper.updateStatus(ticket, 1);
+    }
+
+    @Override
+    public LoginTicket findLoginTicket(String ticket) {
+
+        return loginTicketMapper.selectByTicket(ticket);
+    }
+
+    @Override
+    public int updateHeader(int id, String headerUrl) {
+        return userMapper.updateHeader(id, headerUrl);
+    }
+
+    @Override
+    public int updatePassword(int id, String password) {
+        return userMapper.updatePassword(id,password);
     }
 }

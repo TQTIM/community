@@ -32,5 +32,11 @@
     <update id="updateStatus">
         update user set status =1 where id = #{id}
     </update>
+    <update id="updateHeader">
+        update user set header_url = #{headerUrl} where id = #{id}
+    </update>
 
+    <update id="updatePassword">
+        update user set password = #{password} where id = #{id}
+    </update>
 </mapper>

@@ -1,5 +1,6 @@
 package com.tq.community.service;
 
+import com.tq.community.entity.LoginTicket;
 import com.tq.community.entity.User;
 
 import java.util.Map;
@@ -34,4 +35,27 @@ public interface UserService {
     Map<String,Object> login(String username,String password,long expiredSeconds);
 
     void logout(String ticket);
+
+    /**
+     *通过凭证查询凭证信息
+     * @param ticket
+     * @return LoginTicket
+     */
+    LoginTicket findLoginTicket(String ticket);
+
+    /**
+     * 更新用户头像
+     * @param id
+     * @param headerUrl
+     * @return
+     */
+    int updateHeader(int id, String headerUrl);
+
+    /**
+     * 修改密码
+     * @param id
+     * @param password
+     * @return
+     */
+    int updatePassword(int id,String password);
 }
