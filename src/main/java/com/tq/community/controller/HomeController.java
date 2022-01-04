@@ -33,7 +33,7 @@ public class HomeController {
     @GetMapping(value = "/index")
     public String getIndexPage(Model model,@RequestParam(defaultValue = "1",value ="pageNum") Integer pageNum){
         PageHelper.startPage(pageNum,4);
-        List<DiscussPost> lists = discussPostService.selectDiscussPosts(101);
+        List<DiscussPost> lists = discussPostService.selectDiscussPosts(155);//暂时固定死了，考虑是否有用户id来显示
         PageInfo<DiscussPost> pageInfo = new PageInfo<>(lists);
         List<Map<String,Object>> discussPosts=new ArrayList<>();
         for (DiscussPost post:pageInfo.getList()

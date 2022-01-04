@@ -18,4 +18,9 @@ import java.util.List;
 public interface DiscussPostMapper {
     List<DiscussPost> selectDiscussPosts(@Param(value = "userid") int userid);
 
+    //发帖
+    int insertDiscussPost(DiscussPost discussPost);
+    //帖子详情
+    DiscussPost selectDiscussById(int id);
+
 }

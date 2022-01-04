@@ -12,4 +12,11 @@ import java.util.List;
  */
 public interface DiscussPostService {
     List<DiscussPost> selectDiscussPosts(int userid);
+
+    //增加帖子
+   int addDiscussPost(DiscussPost post);
+
+   //帖子详情
+    DiscussPost selectDiscussById(int id);
+
 }
