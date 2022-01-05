@@ -74,8 +74,14 @@ public class DiscussPostController {
 
         return "/site/discuss-detail";
 
+
     }
 
+    public void testBranch(){
+        System.out.println("主分支");
+        System.out.println("我是tq_branch分支");
+        System.out.println("tq_branch分支测试");
+    }
 
 
 }
